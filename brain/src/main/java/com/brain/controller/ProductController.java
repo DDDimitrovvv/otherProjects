@@ -60,6 +60,11 @@ public class ProductController {
         return productService.decreaseQuantity(id, quantity);
     }
 
+    @GetMapping("/categories")
+    public ResponseEntity<?> visualizeCategoriesWithTotalQuantity(){
+        return productService.showGroupedCategories();
+    }
+
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteProductByGivenID(@PathVariable Long id) {

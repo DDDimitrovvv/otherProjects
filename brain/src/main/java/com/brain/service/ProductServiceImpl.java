@@ -94,9 +94,27 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public ResponseEntity<?> showGroupedCategories() {
+        List<String> categories = productRepository.groupedCategoriesAndSumTheQuantity();
+        StringBuilder output = new StringBuilder().append("[");
+        for ( int i = 0; i < categories.size(); i++ ){
+            String c = categories.get(i).trim().split(",")[0];
+            String q = categories.get(i).trim().split(",")[1];
+            if (i != categories.size() - 1){
+                output.append(String.format("{category: \"%s\", productsAvailable: %s}, ", c, q));
+
+            } else {
+                output.append(String.format("{category: \"%s\", productsAvailable: %s}]", c, q));
+            }
+        }
+
+        return new ResponseEntity<>(output.toString(), HttpStatus.OK);
+    }
+
+    @Override
     public ResponseEntity<?> decreaseQuantity(Long id, int quantity) {
 
-        if(quantity < 1){
+        if (quantity < 1) {
             return new ResponseEntity<>("The quantity should be a valid positive digit!", HttpStatus.BAD_REQUEST);
         }
 

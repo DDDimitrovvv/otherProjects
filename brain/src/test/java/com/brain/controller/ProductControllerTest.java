@@ -175,6 +175,15 @@ public class ProductControllerTest {
         Assertions.assertEquals(2, productRepository.getProductQuantityByReceivedId(testProductId));
     }
 
+    @Test
+    void showCategoriesGroupWithQuantity() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.
+                get(PRODUCT_CONTROLLER_PREFIX + "/categories")).
+                andExpect(status().is2xxSuccessful());
+
+        Assertions.assertEquals(List.of("Notebook,6"), productRepository.groupedCategoriesAndSumTheQuantity());
+    }
+
     private void init() {
         try {
             ProductEntity productEntity1 = new ProductEntity()

@@ -21,4 +21,7 @@ public interface ProductService {
     void seedProducts();
 
     ResponseEntity<?> decreaseQuantity(Long id, int quantity);
+
+    ResponseEntity<?> showGroupedCategories();
+
 }
