@@ -55,6 +55,11 @@ public class ProductController {
         return productService.updateProduct(modelMapper.map(productUpdateBindingModel, ProductServiceModel.class), id);
     }
 
+    @GetMapping("/{id}/order/{quantity}")
+    public ResponseEntity<?> decreaseProductQuantity(@PathVariable Long id, @PathVariable int quantity){
+        return productService.decreaseQuantity(id, quantity);
+    }
+
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
@@ -74,4 +79,6 @@ public class ProductController {
         }
         return null;
     }
+
+
 }

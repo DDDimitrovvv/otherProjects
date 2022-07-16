@@ -19,4 +19,6 @@ public interface ProductService {
     ResponseEntity<?> deleteProduct(Long id);
 
     void seedProducts();
+
+    ResponseEntity<?> decreaseQuantity(Long id, int quantity);
 }

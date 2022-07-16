@@ -107,7 +107,7 @@ public class ProductControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
 
         mockMvc.perform(MockMvcRequestBuilders.
-                put(PRODUCT_CONTROLLER_PREFIX + "/update" + "/{id}", testProductId)
+                put(PRODUCT_CONTROLLER_PREFIX + "/update/{id}", testProductId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(body))
                 .accept(MediaType.APPLICATION_JSON))
@@ -120,10 +120,28 @@ public class ProductControllerTest {
     @Test
     void deleteProductByGivenId() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.
-                delete(PRODUCT_CONTROLLER_PREFIX + "/delete/" + "/{id}", testProductId)).
+                delete(PRODUCT_CONTROLLER_PREFIX + "/delete/{id}", testProductId)).
                 andExpect(status().is2xxSuccessful());
 
         Assertions.assertEquals(1, productRepository.getCountOfAllProductEntitiesByCategory("Notebook"));
+    }
+
+    @Test
+    void decreaseQuantityOfProductByGivenIdSuccessfully() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.
+                get(PRODUCT_CONTROLLER_PREFIX + "/{id}/order/{quantity}", testProductId, 1)).
+                andExpect(status().is2xxSuccessful());
+
+        Assertions.assertEquals(1, productRepository.getProductQuantityByReceivedId(testProductId));
+    }
+
+    @Test
+    void decreaseQuantityOfProductByGivenIdNotSuccessfully() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.
+                get(PRODUCT_CONTROLLER_PREFIX + "/{id}/order/{quantity}", testProductId, 10)).
+                andExpect(status().is4xxClientError());
+
+        Assertions.assertEquals(2, productRepository.getProductQuantityByReceivedId(testProductId));
     }
 
     private void init() {

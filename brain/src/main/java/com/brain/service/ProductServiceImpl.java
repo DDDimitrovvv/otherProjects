@@ -93,4 +93,30 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
+    @Override
+    public ResponseEntity<?> decreaseQuantity(Long id, int quantity) {
+        if (!productRepository.existsById(id)) {
+            return RESPONSE_ENTITY;
+        }
+        int availableProductQuantity = productRepository.getProductQuantityByReceivedId(id);
+        ProductEntity productEntity = productRepository.findById(id).get();
+
+        if (availableProductQuantity > quantity) {
+            productEntity.setQuantity(availableProductQuantity - quantity);
+            productRepository.save(productEntity);
+            String outputString = String.format("You successfully bought products! Current quantity is %s of product with ID: %s.", (availableProductQuantity - quantity), id);
+
+            return new ResponseEntity<>(outputString, HttpStatus.OK);
+
+        } else if (availableProductQuantity == quantity) {
+            productRepository.deleteById(id);
+            String outputString = String.format("No quantity left for product with id: %s. This product is already sold!", id);
+            return new ResponseEntity<>(outputString, HttpStatus.OK);
+
+        } else {
+            String outputString = String.format("There is not enough quantity of product with id: %s! Current quantity: %s.", id, availableProductQuantity);
+            return new ResponseEntity<>(outputString, HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }
