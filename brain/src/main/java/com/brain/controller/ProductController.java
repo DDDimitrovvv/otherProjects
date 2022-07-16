@@ -12,8 +12,11 @@ import java.util.List;
 @RequestMapping("/products")
 public class ProductController {
 
-    @Autowired
     ProductServiceImpl productServiceImpl;
+
+    public ProductController(ProductServiceImpl productServiceImpl) {
+        this.productServiceImpl = productServiceImpl;
+    }
 
     @GetMapping("/all")
     public List<ProductEntity> list() {
@@ -24,10 +27,12 @@ public class ProductController {
     public ResponseEntity<?> get(@PathVariable Long id) {
         return productServiceImpl.showProductById(id);
     }
+
     @PostMapping("/add")
     public void add(@RequestBody ProductEntity product) {
         productServiceImpl.saveProduct(product);
     }
+
     @PutMapping("/update/{id}")
     public ResponseEntity<?> update(@RequestBody ProductEntity product, @PathVariable Long id) {
         return productServiceImpl.updateProduct(product, id);
