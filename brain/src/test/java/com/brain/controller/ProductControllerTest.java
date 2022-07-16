@@ -166,6 +166,15 @@ public class ProductControllerTest {
         Assertions.assertEquals(2, productRepository.getProductQuantityByReceivedId(testProductId));
     }
 
+    @Test
+    void decreaseQuantityOfProductByGivenIdNotSuccessfullyWithNegativeInputQuantity() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.
+                get(PRODUCT_CONTROLLER_PREFIX + "/{id}/order/{quantity}", testProductId, -1)).
+                andExpect(status().is4xxClientError());
+
+        Assertions.assertEquals(2, productRepository.getProductQuantityByReceivedId(testProductId));
+    }
+
     private void init() {
         try {
             ProductEntity productEntity1 = new ProductEntity()

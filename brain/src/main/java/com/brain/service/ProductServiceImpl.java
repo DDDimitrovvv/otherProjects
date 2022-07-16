@@ -95,6 +95,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ResponseEntity<?> decreaseQuantity(Long id, int quantity) {
+
+        if(quantity < 1){
+            return new ResponseEntity<>("The quantity should be a valid positive digit!", HttpStatus.BAD_REQUEST);
+        }
+
         if (!productRepository.existsById(id)) {
             return RESPONSE_ENTITY;
         }
