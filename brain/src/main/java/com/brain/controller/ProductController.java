@@ -27,30 +27,30 @@ public class ProductController {
     }
 
     @GetMapping("/all")
-    public List<ProductEntity> list() {
+    public List<ProductEntity> listAllProducts() {
         return productService.listAllProducts();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> get(@PathVariable Long id) {
+    public ResponseEntity<?> getProductByID(@PathVariable Long id) {
         return productService.showProductById(id);
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> add(@RequestBody @Valid ProductBindingModel productAddBindingModel,
-                                 BindingResult bindingResult,
-                                 RedirectAttributes redirectAttributes) {
-        ResponseEntity<?> errorMessagesContainer = getResponseEntity(productAddBindingModel, bindingResult, redirectAttributes);
+    public ResponseEntity<?> addProductInDB(@RequestBody @Valid ProductBindingModel productAddBindingModel,
+                                            BindingResult bindingResult,
+                                            RedirectAttributes redirectAttributes) {
+        ResponseEntity<?> errorMessagesContainer = validateInputProductObject(productAddBindingModel, bindingResult, redirectAttributes);
         if (errorMessagesContainer != null) return errorMessagesContainer;
         return productService.addProduct(modelMapper.map(productAddBindingModel, ProductServiceModel.class));
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> update(@RequestBody @Valid ProductBindingModel productUpdateBindingModel,
-                                    @PathVariable Long id,
-                                    BindingResult bindingResult,
-                                    RedirectAttributes redirectAttributes) {
-        ResponseEntity<?> errorMessagesContainer = getResponseEntity(productUpdateBindingModel, bindingResult, redirectAttributes);
+    public ResponseEntity<?> updateExistingProductByID(@RequestBody @Valid ProductBindingModel productUpdateBindingModel,
+                                                       @PathVariable Long id,
+                                                       BindingResult bindingResult,
+                                                       RedirectAttributes redirectAttributes) {
+        ResponseEntity<?> errorMessagesContainer = validateInputProductObject(productUpdateBindingModel, bindingResult, redirectAttributes);
         if (errorMessagesContainer != null) return errorMessagesContainer;
         return productService.updateProduct(modelMapper.map(productUpdateBindingModel, ProductServiceModel.class), id);
     }
@@ -62,11 +62,11 @@ public class ProductController {
 
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    public ResponseEntity<?> deleteProductByGivenID(@PathVariable Long id) {
         return productService.deleteProduct(id);
     }
 
-    private ResponseEntity<?> getResponseEntity(@RequestBody @Valid ProductBindingModel productBindingModel, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    private ResponseEntity<?> validateInputProductObject(@RequestBody @Valid ProductBindingModel productBindingModel, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("productAddBindingModel", productBindingModel);
             redirectAttributes.addFlashAttribute(

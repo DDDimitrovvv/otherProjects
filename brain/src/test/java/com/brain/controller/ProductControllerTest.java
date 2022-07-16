@@ -95,6 +95,28 @@ public class ProductControllerTest {
     }
 
     @Test
+    void storeNewProductInDatabaseNotSuccessfully() throws Exception {
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("name", "Dell");
+        body.put("category", "");
+        body.put("description", "With simple 16:9 IPS screen");
+        body.put("quantity", "4");
+        body.put("createdDate", "2020-05-06");
+        body.put("lastModifiedDate", "2021-05-06");
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        mockMvc.perform(MockMvcRequestBuilders.
+                post(PRODUCT_CONTROLLER_PREFIX + "/add")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(body))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError());
+
+        Assertions.assertEquals(2, productRepository.getCountOfAllProductEntitiesByCategory("Notebook"));
+    }
+
+    @Test
     void updateAlreadyExistingProductInDatabase() throws Exception {
 
         Map<String, Object> body = new HashMap<>();
