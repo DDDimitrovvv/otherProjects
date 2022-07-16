@@ -29,8 +29,8 @@ public class ProductController {
     }
 
     @PostMapping("/add")
-    public void add(@RequestBody ProductEntity product) {
-        productServiceImpl.saveProduct(product);
+    public ResponseEntity<?> add(@RequestBody ProductEntity product) {
+        return productServiceImpl.saveProduct(product);
     }
 
     @PutMapping("/update/{id}")

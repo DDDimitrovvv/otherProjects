@@ -38,8 +38,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void saveProduct(ProductEntity product) {
+    public ResponseEntity<?> saveProduct(ProductEntity product) {
         productRepository.save(product);
+        return new ResponseEntity<>("The product has been added successfully!", HttpStatus.OK);
     }
 
 

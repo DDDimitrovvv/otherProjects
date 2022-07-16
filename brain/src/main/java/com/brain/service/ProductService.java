@@ -9,7 +9,7 @@ public interface ProductService {
 
     List<ProductEntity> listAllProducts();
 
-    void saveProduct(ProductEntity product);
+    ResponseEntity<?> saveProduct(ProductEntity product);
 
     ResponseEntity<?> updateProduct(ProductEntity product, Long id);
 
