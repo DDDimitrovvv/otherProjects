@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Dell 5401",
+    "category": "Laptop",
+    "description": "Dell description",
+    "quantity": 12,
+    "createdDate": "2020-05-20",
+    "lastModifiedDate": "2020-06-30"
+  },
+  {
+    "name": "Dell U2413",
+    "category": "Monitor",
+    "description": "Dell monitor",
+    "quantity": 15,
+    "createdDate": "2020-05-20",
+    "lastModifiedDate": "2020-06-30"
+  },
+  {
+    "name": "Samsung",
+    "category": "Monitor",
+    "description": "Samsung monitor",
+    "quantity": 9,
+    "createdDate": "2020-06-30",
+    "lastModifiedDate": "2020-07-15"
+  }
+  ]
