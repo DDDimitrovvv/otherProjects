@@ -151,7 +151,7 @@ public class ProductControllerTest {
     @Test
     void decreaseQuantityOfProductByGivenIdSuccessfully() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.
-                get(PRODUCT_CONTROLLER_PREFIX + "/{id}/order/{quantity}", testProductId, 1)).
+                post(PRODUCT_CONTROLLER_PREFIX + "/{id}/order/{quantity}", testProductId, 1)).
                 andExpect(status().is2xxSuccessful());
 
         Assertions.assertEquals(1, productRepository.getProductQuantityByReceivedId(testProductId));
