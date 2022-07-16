@@ -3,28 +3,25 @@ package com.brain.controller;
 import com.brain.model.entities.ProductEntity;
 import com.brain.repository.ProductRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -50,10 +47,7 @@ public class ProductControllerTest {
 
     @AfterEach
     public void setDown() {
-//        if (productRepository.findById(testProductId).isPresent()) {
-//            productRepository.deleteById(testProductId);
-//        }
-        if(productRepository.getCountOfAllProductEntities() != 0){
+        if (productRepository.getCountOfAllProductEntities() != 0) {
             productRepository.deleteAll();
         }
     }
@@ -150,16 +144,11 @@ public class ProductControllerTest {
                     .setCreatedDate(new SimpleDateFormat("yyyy-MM-dd").parse("2017-03-12"))
                     .setLastModifiedDate(new SimpleDateFormat("yyyy-MM-dd").parse("2019-02-07"));
 
-            productEntity1 = productRepository.save(productEntity1);
-            productEntity2 = productRepository.save(productEntity2);
+            productRepository.saveAll(List.of(productEntity1, productEntity2));
             testProductId = productEntity1.getId();
 
         } catch (ParseException exception) {
             LOGGER.error("Error during Date object creation: " + exception.getMessage());
         }
-
-
     }
-
-
 }

@@ -1,6 +1,7 @@
 package com.brain.service;
 
 import com.brain.model.entities.ProductEntity;
+import com.brain.model.service.ProductServiceModel;
 import com.brain.repository.ProductRepository;
 import com.google.gson.Gson;
 import org.junit.jupiter.api.Assertions;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,9 @@ public class ProductServiceTest {
     @Autowired
     private ProductRepository mockProductRepository;
 
+    @Autowired
+    ModelMapper mockModelMapper;
+
     @Mock
     Resource productsFile;
 
@@ -45,7 +50,7 @@ public class ProductServiceTest {
     public void setUp() {
         this.init();
         mockProductRepository = Mockito.mock(ProductRepository.class);
-        productServiceTest = new ProductServiceImpl(productsFile, mockProductRepository, gson);
+        productServiceTest = new ProductServiceImpl(productsFile, mockProductRepository, mockModelMapper, gson);
     }
 
 
@@ -69,7 +74,9 @@ public class ProductServiceTest {
         } catch (ParseException exception) {
             LOGGER.error("Error during Date object creation: " + exception.getMessage());
 
-            productServiceTest.updateProduct(productEntity4, 1L);
+            ProductServiceModel productServiceModel = mockModelMapper.map(productEntity4, ProductServiceModel.class);
+
+            productServiceTest.updateProduct(productServiceModel, 1L);
             Mockito.verify(mockProductRepository).save(productEntity4);
         }
     }
@@ -96,8 +103,7 @@ public class ProductServiceTest {
         } catch (ParseException exception) {
             LOGGER.error("Error during Date object creation: " + exception.getMessage());
         }
-//        mockProductRepository.save(productEntity3);
-        productServiceTest.saveProduct(productEntity3);
+        mockProductRepository.save(productEntity3);
 
         Mockito.verify(mockProductRepository).save(productEntity3);
 
