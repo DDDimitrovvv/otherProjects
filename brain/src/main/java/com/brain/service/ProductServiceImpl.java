@@ -150,4 +150,13 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
+    @Override
+    public ResponseEntity<?> deleteAllProducts() {
+        if (productRepository.getCountOfAllProductEntities() == 0) {
+            return new ResponseEntity<>("There is no products stored in the database.", HttpStatus.BAD_REQUEST);
+        }
+        productRepository.deleteAll();
+        return new ResponseEntity<>("All products have been successfully deleted.", HttpStatus.OK);
+    }
+
 }

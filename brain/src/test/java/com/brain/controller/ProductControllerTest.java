@@ -65,7 +65,7 @@ public class ProductControllerTest {
     @Test
     void showAllStoredProductInDatabase() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.
-                get(PRODUCT_CONTROLLER_PREFIX + "/all")).
+                get(PRODUCT_CONTROLLER_PREFIX + "")).
                 andExpect(status().is2xxSuccessful());
 
         Assertions.assertEquals(2, productRepository.getCountOfAllProductEntitiesByCategory("Notebook"));
@@ -146,6 +146,15 @@ public class ProductControllerTest {
                 andExpect(status().is2xxSuccessful());
 
         Assertions.assertEquals(1, productRepository.getCountOfAllProductEntitiesByCategory("Notebook"));
+    }
+
+    @Test
+    void deleteAllProducts() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.
+                delete(PRODUCT_CONTROLLER_PREFIX + "/delete/all", testProductId)).
+                andExpect(status().is2xxSuccessful());
+
+        Assertions.assertEquals(0, productRepository.getCountOfAllProductEntities());
     }
 
     @Test

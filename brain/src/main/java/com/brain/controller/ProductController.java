@@ -27,7 +27,7 @@ public class ProductController {
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping("/all")
+    @GetMapping(value = {"", "/"})
     public List<ProductEntity> listAllProducts() {
         return productService.listAllProducts();
     }
@@ -70,6 +70,11 @@ public class ProductController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteProductByGivenID(@PathVariable Long id) {
         return productService.deleteProduct(id);
+    }
+
+    @DeleteMapping("/delete/all")
+    public ResponseEntity<?> deleteAllProduct() {
+        return productService.deleteAllProducts();
     }
 
     private ResponseEntity<?> validateInputProductObject(@RequestBody @Valid ProductBindingModel productBindingModel, BindingResult bindingResult, RedirectAttributes redirectAttributes) {

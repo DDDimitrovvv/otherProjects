@@ -24,4 +24,6 @@ public interface ProductService {
 
     ResponseEntity<?> showGroupedCategories();
 
+    ResponseEntity<?> deleteAllProducts();
 }
+
