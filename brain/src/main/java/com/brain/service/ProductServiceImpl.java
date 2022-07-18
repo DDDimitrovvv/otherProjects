@@ -4,6 +4,8 @@ import com.brain.model.entities.ProductEntity;
 import com.brain.model.service.ProductServiceModel;
 import com.brain.repository.ProductRepository;
 import com.google.gson.Gson;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -15,7 +17,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -96,19 +101,22 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ResponseEntity<?> showGroupedCategories() {
         List<String> categories = productRepository.groupedCategoriesAndSumTheQuantity();
-        StringBuilder output = new StringBuilder().append("[");
-        for ( int i = 0; i < categories.size(); i++ ){
-            String c = categories.get(i).trim().split(",")[0];
-            String q = categories.get(i).trim().split(",")[1];
-            if (i != categories.size() - 1){
-                output.append(String.format("{category: \"%s\", productsAvailable: %s}, ", c, q));
+        if(categories.isEmpty()){
+            return new ResponseEntity<>("There are no categories to be shown.", HttpStatus.BAD_REQUEST);
+        }
+        JSONArray jsonArray = new JSONArray();
+        for ( String element : categories ){
+            String category = element.trim().split(",")[ 0 ];
+            Integer quantity = Integer.parseInt(element.trim().split(",")[ 1 ]);
+            Map<String, Object> obj = new LinkedHashMap<String, Object>();
+            obj.put("category", category);
+            obj.put("productsAvailable", quantity);
 
-            } else {
-                output.append(String.format("{category: \"%s\", productsAvailable: %s}]", c, q));
-            }
+            JSONObject jsonObject = new JSONObject(obj);
+            jsonArray.add(jsonObject);
         }
 
-        return new ResponseEntity<>(output.toString(), HttpStatus.OK);
+        return new ResponseEntity<>(jsonArray.toJSONString(), HttpStatus.OK);
     }
 
     @Override

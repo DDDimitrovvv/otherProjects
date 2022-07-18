@@ -6,6 +6,7 @@ import com.brain.model.service.ProductServiceModel;
 import com.brain.service.ProductService;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -60,7 +61,7 @@ public class ProductController {
         return productService.decreaseQuantity(id, quantity);
     }
 
-    @GetMapping("/categories")
+    @GetMapping(value = "/categories", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> visualizeCategoriesWithTotalQuantity(){
         return productService.showGroupedCategories();
     }

@@ -20,6 +20,6 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
     @Query("SELECT p.quantity FROM ProductEntity AS p WHERE p.id=?1")
     int getProductQuantityByReceivedId(Long id);
 
-    @Query("SELECT p.category AS category, SUM(p.quantity) AS qunt from ProductEntity AS p GROUP BY p.category")
+    @Query("SELECT p.category AS category, SUM(p.quantity) AS qunt from ProductEntity AS p GROUP BY p.category ORDER BY category ASC")
     List<String> groupedCategoriesAndSumTheQuantity();
 }
