@@ -15,6 +15,7 @@ public class ApplicationInit implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        productService.seedProducts();
+//        Another option for insertion values into the table "products" by using a JSON file - instead of liquibase functionality
+//        productService.seedProducts();
     }
 }

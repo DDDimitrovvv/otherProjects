@@ -15,6 +15,13 @@
     <description>Interview task</description>
     <properties>
         <java.version>11</java.version>
+        <!-- Liquibase settings -->
+        <liquibase.url>jdbc:mysql://localhost:3306/brain_db</liquibase.url>
+        <liquibase.driver>com.mysql.cj.jdbc.Driver</liquibase.driver>
+        <liquibase.username>root</liquibase.username>
+        <liquibase.password>929620</liquibase.password>
+        <liquibase.changeLogFile>db/changelog/changelog-master.xml</liquibase.changeLogFile>
+        <liquibase.promptOnNonLocalDatabase>false</liquibase.promptOnNonLocalDatabase>
     </properties>
     <dependencies>
         <dependency>
@@ -38,6 +45,10 @@
             <artifactId>mockito-core</artifactId>
             <version>3.7.7</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
         </dependency>
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
