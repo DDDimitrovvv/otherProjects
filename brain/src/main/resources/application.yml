@@ -9,9 +9,9 @@ spring:
         database-platform: org.hibernate.dialect.MySQL8Dialect
         hibernate:
 #            Only for executing the .sql files from changelog-master.xml file: create -> none -> update
-#            ddl-auto: create
+            ddl-auto: create
 #            ddl-auto: none
-            ddl-auto: update
+#            ddl-auto: update
         open-in-view: false
         show-sql: true
         properties:

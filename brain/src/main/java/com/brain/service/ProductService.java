@@ -25,5 +25,7 @@ public interface ProductService {
     ResponseEntity<?> showGroupedCategories();
 
     ResponseEntity<?> deleteAllProducts();
+
+    ResponseEntity<?> showListWithProductsByPage(String orderByElement, String directionOrder, Integer pageNumber, Integer countOfProducts);
 }
 

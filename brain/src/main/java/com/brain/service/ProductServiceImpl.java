@@ -3,12 +3,17 @@ package com.brain.service;
 import com.brain.model.entities.ProductEntity;
 import com.brain.model.service.ProductServiceModel;
 import com.brain.repository.ProductRepository;
+import com.brain.repository.ProductRepositoryPagingAndSorting;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -16,17 +21,16 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class ProductServiceImpl implements ProductService {
 
     private static final ResponseEntity<?> RESPONSE_ENTITY = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There is no product in the database with this ID!");
     private final ProductRepository productRepository;
+    private final ProductRepositoryPagingAndSorting productRepositoryPagingAndSorting;
     private final ModelMapper modelMapper;
     private final Gson gson;
     private final Resource productsFile;
@@ -34,10 +38,12 @@ public class ProductServiceImpl implements ProductService {
 
     public ProductServiceImpl(@Value("classpath:input/products.json") Resource productsFile,
                               ProductRepository productRepository,
+                              ProductRepositoryPagingAndSorting productRepositoryPagingAndSorting,
                               ModelMapper modelMapper,
                               Gson gson) {
         this.productsFile = productsFile;
         this.productRepository = productRepository;
+        this.productRepositoryPagingAndSorting = productRepositoryPagingAndSorting;
         this.modelMapper = modelMapper;
         this.gson = gson;
     }
@@ -101,18 +107,18 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ResponseEntity<?> showGroupedCategories() {
         List<String> categories = productRepository.groupedCategoriesAndSumTheQuantity();
-        if(categories.isEmpty()){
+        if (categories.isEmpty()) {
             return new ResponseEntity<>("There are no categories to be shown.", HttpStatus.BAD_REQUEST);
         }
         JSONArray jsonArray = new JSONArray();
         for ( String element : categories ){
             String category = element.trim().split(",")[ 0 ];
             Integer quantity = Integer.parseInt(element.trim().split(",")[ 1 ]);
-            Map<String, Object> obj = new LinkedHashMap<String, Object>();
-            obj.put("category", category);
-            obj.put("productsAvailable", quantity);
+            Map<String, Object> sortedMap = new LinkedHashMap<String, Object>();
+            sortedMap.put("category", category);
+            sortedMap.put("productsAvailable", quantity);
 
-            JSONObject jsonObject = new JSONObject(obj);
+            JSONObject jsonObject = new JSONObject(sortedMap);
             jsonArray.add(jsonObject);
         }
 
@@ -157,6 +163,59 @@ public class ProductServiceImpl implements ProductService {
         }
         productRepository.deleteAll();
         return new ResponseEntity<>("All products have been successfully deleted.", HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<?> showListWithProductsByPage(String orderByElement, String directionOrder, Integer numberOfPages, Integer countOfProducts) {
+        if (productRepository.getCountOfAllProductEntities() == 0) {
+            return new ResponseEntity<>("There is no products stored in the database.", HttpStatus.BAD_REQUEST);
+        }
+
+        List<ProductEntity> sortedListOfProducts = new ArrayList<>();
+        if (orderByElement.isEmpty()) {
+            return new ResponseEntity<>("There is no sorting category in your query.", HttpStatus.BAD_REQUEST);
+        } else if ((numberOfPages == null || numberOfPages < 1) || (countOfProducts == null || countOfProducts < 1)) {
+            Iterable<ProductEntity> allProductsSortedByCategory= null;
+            if (directionOrder.equalsIgnoreCase("desc")) {
+//                allPagesOfProducts = (Page<ProductEntity>) productRepositoryPagingAndSorting.findAll(Sort.by(orderByElement).descending());
+                allProductsSortedByCategory = productRepositoryPagingAndSorting.findAll(Sort.by(orderByElement).ascending());
+
+            } else {
+//                allPagesOfProducts = (Page<ProductEntity>) productRepositoryPagingAndSorting.findAll(Sort.by(orderByElement).ascending());
+                allProductsSortedByCategory = productRepositoryPagingAndSorting.findAll(Sort.by(orderByElement).ascending());
+            }
+            allProductsSortedByCategory.iterator().forEachRemaining(sortedListOfProducts::add);
+        } else {
+            PageRequest pageRequest = null;
+            if (directionOrder.equalsIgnoreCase("desc")) {
+                pageRequest = PageRequest.of(numberOfPages - 1, countOfProducts, Sort.by(orderByElement).descending());
+            } else {
+                pageRequest = PageRequest.of(numberOfPages - 1, countOfProducts, Sort.by(orderByElement).ascending());
+            }
+            Page<ProductEntity> allPagesOfProducts = productRepositoryPagingAndSorting.findAll(pageRequest);
+            sortedListOfProducts = allPagesOfProducts.getContent();
+
+        }
+
+        JSONArray jsonArray = new JSONArray();
+        for ( ProductEntity element : sortedListOfProducts ){
+            ObjectMapper objectMapper = new ObjectMapper();
+            LinkedHashMap<String, Object> sortedMap = objectMapper.convertValue(element, LinkedHashMap.class);
+
+            Date createdDate = new Date((long) sortedMap.get("createdDate"));
+            Date lastModifiedDate = new Date((long) sortedMap.get("lastModifiedDate"));
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            sortedMap.put("createdDate", dateFormat.format(createdDate));
+            sortedMap.put("lastModifiedDate", dateFormat.format(lastModifiedDate));
+            String outputJsonObjectString = new Gson().toJson(sortedMap);
+            jsonArray.add(outputJsonObjectString);
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("products", jsonArray);
+        jsonObject.put("totalRecords", productRepository.getCountOfAllProductEntities());
+
+        return new ResponseEntity<>(jsonObject.toJSONString(), HttpStatus.OK);
     }
 
 }

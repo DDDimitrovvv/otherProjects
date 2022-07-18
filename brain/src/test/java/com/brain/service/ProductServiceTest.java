@@ -3,6 +3,7 @@ package com.brain.service;
 import com.brain.model.entities.ProductEntity;
 import com.brain.model.service.ProductServiceModel;
 import com.brain.repository.ProductRepository;
+import com.brain.repository.ProductRepositoryPagingAndSorting;
 import com.google.gson.Gson;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +39,9 @@ public class ProductServiceTest {
     private ProductRepository mockProductRepository;
 
     @Autowired
+    private ProductRepositoryPagingAndSorting productRepositoryPagingAndSorting;
+
+    @Autowired
     ModelMapper mockModelMapper;
 
     @Mock
@@ -50,7 +54,7 @@ public class ProductServiceTest {
     public void setUp() {
         this.init();
         mockProductRepository = Mockito.mock(ProductRepository.class);
-        productServiceTest = new ProductServiceImpl(productsFile, mockProductRepository, mockModelMapper, gson);
+        productServiceTest = new ProductServiceImpl(productsFile, mockProductRepository, productRepositoryPagingAndSorting, mockModelMapper, gson);
     }
 
 

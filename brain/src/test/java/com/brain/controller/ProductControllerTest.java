@@ -63,12 +63,21 @@ public class ProductControllerTest {
     }
 
     @Test
-    void showAllStoredProductInDatabase() throws Exception {
+    void showProductsByPageAndOrdered() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.
-                get(PRODUCT_CONTROLLER_PREFIX + "")).
+                get(PRODUCT_CONTROLLER_PREFIX + "?orderBy=category&direction=DESC&page=1&pageSize=10")).
                 andExpect(status().is2xxSuccessful());
 
-        Assertions.assertEquals(2, productRepository.getCountOfAllProductEntitiesByCategory("Notebook"));
+        Assertions.assertEquals(2, productRepository.getCountOfAllProductEntities());
+    }
+
+    @Test
+    void showProductsOrderedWithoutPaging() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.
+                get(PRODUCT_CONTROLLER_PREFIX + "?orderBy=category&direction=DESC")).
+                andExpect(status().is2xxSuccessful());
+
+        Assertions.assertEquals(2, productRepository.getCountOfAllProductEntities());
     }
 
 

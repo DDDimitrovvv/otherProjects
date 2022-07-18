@@ -27,7 +27,7 @@ public class ProductController {
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping(value = {"", "/"})
+    @GetMapping(value ={"/", "all"})
     public List<ProductEntity> listAllProducts() {
         return productService.listAllProducts();
     }
@@ -57,13 +57,23 @@ public class ProductController {
     }
 
     @PostMapping("/{id}/order/{quantity}")
-    public ResponseEntity<?> decreaseProductQuantity(@PathVariable Long id, @PathVariable int quantity){
+    public ResponseEntity<?> decreaseProductQuantity(@PathVariable Long id, @PathVariable int quantity) {
         return productService.decreaseQuantity(id, quantity);
     }
 
     @GetMapping(value = "/categories", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> visualizeCategoriesWithTotalQuantity(){
+    public ResponseEntity<?> visualizeCategoriesWithTotalQuantity() {
         return productService.showGroupedCategories();
+    }
+
+    @GetMapping(value = "",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> visualizeListOfProductsByPageAndOrder(
+            @RequestParam(value = "orderBy") String orderBy,
+            @RequestParam(value = "direction", required = false) String direction,
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+        return productService.showListWithProductsByPage(orderBy, direction, page, pageSize);
     }
 
 
@@ -86,7 +96,6 @@ public class ProductController {
             StringBuilder errorMessagesContainer = new StringBuilder();
             bindingResult.getFieldErrors().forEach(fieldError -> errorMessagesContainer.append(fieldError.getDefaultMessage()).append(System.lineSeparator()));
             return new ResponseEntity<>(errorMessagesContainer, HttpStatus.BAD_REQUEST);
-
         }
         return null;
     }
