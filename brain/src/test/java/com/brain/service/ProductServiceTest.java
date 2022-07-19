@@ -23,9 +23,6 @@ import org.springframework.http.ResponseEntity;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.List;
-
-import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
