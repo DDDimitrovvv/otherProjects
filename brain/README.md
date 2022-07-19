@@ -7,12 +7,13 @@ The main path "/products" show all available products.
 ### Used technologies and architectures:
 1. SpringBoot;
 2. MySQL database;
-3. Liquibase
+3. Liquibase;
 4. REST services;
 5. SpringBoot tests with Mockito;
 
 ###There are multiple paths specified for this project:
-- "/products/{id}" - visualized product by id;
+- "/products/{id}" - visualizing product by id;
+- "/products/all" - visualizing all stored products in the database;
 - "/products/add" - adding a product in the database;
 - "/products/update/{id}" - updating an existing product in the database;
 - "/products/{id}/order/{quantity}" - ordering product by given id and quantity;

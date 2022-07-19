@@ -56,7 +56,7 @@ public class ProductController {
         return productService.updateProduct(modelMapper.map(productUpdateBindingModel, ProductServiceModel.class), id);
     }
 
-    @PostMapping("/{id}/order/{quantity}")
+    @GetMapping("/{id}/order/{quantity}")
     public ResponseEntity<?> decreaseProductQuantity(@PathVariable Long id, @PathVariable int quantity) {
         return productService.decreaseQuantity(id, quantity);
     }
