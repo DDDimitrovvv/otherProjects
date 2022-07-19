@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -58,11 +60,14 @@ public class ProductServiceTest {
     }
 
 
+    /**
+     * This test will return HttpStatus.BAD_REQUEST because there are no stored items in the DB.
+     * To store them the ProductRepository must not be mocked.
+     */
     @Test
     public void getAllAvailableProducts() {
-        when(mockProductRepository.findAll()).thenReturn(List.of(productEntity1, productEntity2));
-        List<ProductEntity> productEntities2 = productServiceTest.listAllProducts();
-        Assertions.assertEquals(2, productEntities2.size());
+        ResponseEntity<?> productEntities = productServiceTest.listAllProducts();
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, productEntities.getStatusCode());
     }
 
     @Test
@@ -131,8 +136,6 @@ public class ProductServiceTest {
                     .setQuantity(4)
                     .setCreatedDate(new SimpleDateFormat("yyyy-MM-dd").parse("2017-03-12"))
                     .setLastModifiedDate(new SimpleDateFormat("yyyy-MM-dd").parse("2019-02-07"));
-
-
         } catch (ParseException exception) {
             LOGGER.error("Error during Date object creation: " + exception.getMessage());
         }

@@ -11,3 +11,4 @@ The main path "/products" show all available products.
 - "/products/categories" - showing all available categories with corresponding quantity;
 - "/products/delete/{id}" - delete a product from database;
 - "/products/delete/all" - delete all products from database;
+- "/products?orderBy={variable}&direction={variable}&page={variable}&pageSize={variable}" - visualize list of products with page and numbers of products regarding the specific user request (sorted by category parameter, ordered asc/desc on a specific page);
